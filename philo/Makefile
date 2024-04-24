@@ -1,6 +1,6 @@
 name = philo
 cc = cc
-flags = -Wall -Wextra -Werror -g -fsanitize=thread
+flags = -Wall -Wextra -Werror #-g -fsanitize=thread
 src = philo.c ft_atoi.c helper_functions.c helper_functions2.c simulation.c
 obj = $(src:.c=.o)
 

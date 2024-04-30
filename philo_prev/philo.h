@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 14:19:26 by mamazari          #+#    #+#             */
-/*   Updated: 2024/04/17 14:54:40 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/04/30 11:32:23 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,8 @@ typedef struct s_philo
 {
 	pthread_mutex_t	last_time_eat_m;
 	pthread_mutex_t	count_ate_m;
-	pthread_mutex_t	l;
-	pthread_mutex_t	r;
+	pthread_mutex_t	*l;
+	pthread_mutex_t	*r;
 	long long		last_time_eat;
 	int				number;
 	int				count_ate;
@@ -48,6 +48,9 @@ typedef struct s_philo
 }		t_philo;
 
 void		mutex_print(t_philo philo, char *text);
+void		set_lr(t_philo *philo);
+void		set_epoch(t_philo *philo);
+void		exit_cond(int ttd, int tte, int tts, int pc);
 void		init_obj(t_obj *obj, int argc, char **argv);
 void		init_philo(t_philo *philos, t_obj *obj);
 void		philo_usleep(int sleep_time);
@@ -62,6 +65,7 @@ int			stop_simulation(t_obj *obj);
 int			all_finished_eating(t_philo *philos, t_obj *obj);
 int			philo_died(t_philo *philos, t_obj *obj);
 int			ft_atoi(char *str);
+int			error_msg(void);
 long long	get_epoch(void);
 
 #endif

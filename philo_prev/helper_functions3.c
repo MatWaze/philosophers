@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atoi.c                                          :+:      :+:    :+:   */
+/*   helper_functions3.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 16:47:07 by mamazari          #+#    #+#             */
-/*   Updated: 2024/04/02 17:26:20 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/04/30 11:37:43 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,28 @@ int	ft_atoi(char *str)
 	if (str[i] == '-' || str[i] == '+')
 		if (str[i++] == '-')
 			minus = -1;
-	while (str[i] >= '0' && str[i] <= '9')
+	while (str[i])
 	{
-		number = number * 10 + str[i] - '0';
+		if (str[i] >= '0' && str[i] <= '9')
+			number = number * 10 + str[i] - '0';
+		else
+			exit(error_msg());
 		i++;
 	}
+	if (number * minus <= 0)
+		exit(error_msg());
 	return (number * minus);
+}
+void	set_lr(t_philo *philo)
+{
+	philo->l = &philo->obj->forks[philo->number];
+	philo->r = &philo->obj->forks[(philo->number + 1) \
+	% philo->obj->philo_count];
+}
+
+void	set_epoch(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->last_time_eat_m);
+	philo->last_time_eat = get_epoch();
+	pthread_mutex_unlock(&philo->last_time_eat_m);
 }

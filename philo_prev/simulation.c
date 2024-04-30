@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 16:51:19 by mamazari          #+#    #+#             */
-/*   Updated: 2024/04/23 14:36:18 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/04/30 11:33:53 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	all_finished_eating(t_philo *philos, t_obj *obj)
 		pthread_mutex_unlock(&philos[i].count_ate_m);
 		i++;
 	}
-	if (ans == obj->philo_count)
+	if (ans == obj->philo_count && obj->eat_count != -1)
 	{
 		pthread_mutex_lock(&obj->die);
 		obj->dead = 1;
@@ -45,16 +45,15 @@ int	philo_died(t_philo *philos, t_obj *obj)
 	while (i < philos->obj->philo_count)
 	{
 		pthread_mutex_lock(&philos[i].last_time_eat_m);
-		pthread_mutex_lock(&obj->die);
 		if (get_epoch() - philos[i].last_time_eat > obj->time_to_die)
 		{
+			mutex_print(philos[i], "died");
+			pthread_mutex_lock(&obj->die);
 			obj->dead = 1;
 			pthread_mutex_unlock(&obj->die);
-			mutex_print(philos[i], "died");
 			pthread_mutex_unlock(&philos[i].last_time_eat_m);
 			return (1);
 		}
-		pthread_mutex_unlock(&obj->die);
 		pthread_mutex_unlock(&philos[i].last_time_eat_m);
 		i++;
 	}
@@ -88,25 +87,26 @@ void	*philosophers(void *data)
 	t_philo			*philo;
 
 	philo = (t_philo *) data;
-	if (philo->number % 2 == 0)
+	set_lr(philo);
+	set_epoch(philo);
+	if ((philo->number + 1) % 2 == 0)
 		philo_usleep(philo->obj->time_to_eat);
-	philo->l = philo->obj->forks[philo->number];
-	philo->r = philo->obj->forks[(philo->number + 1) % philo->obj->philo_count];
 	while (stop_simulation(philo->obj) == 0)
 	{
 		mutex_print(*philo, "is thinking");
-		pthread_mutex_lock(&philo->l);
+		pthread_mutex_lock(philo->l);
 		mutex_print(*philo, "has taken a fork");
 		if (philo->obj->philo_count == 1)
 		{
-			pthread_mutex_unlock(&philo->l);
+			pthread_mutex_unlock(philo->l);
 			break ;
 		}
-		pthread_mutex_lock(&philo->r);
+		pthread_mutex_lock(philo->r);
 		mutex_print(*philo, "has taken a fork");
 		philo_eat(philo);
-		pthread_mutex_unlock(&philo->l);
-		pthread_mutex_unlock(&philo->r);
+		pthread_mutex_unlock(philo->l);
+		if (philo->l != philo->r)
+			pthread_mutex_unlock(philo->r);
 		philo_sleep(philo);
 	}
 	return (NULL);

@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 14:19:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/04/17 16:02:14 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/04/30 11:30:55 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,13 @@ void	init_obj(t_obj *obj, int argc, char **argv)
 	if (argc == 6)
 		obj->eat_count = ft_atoi(argv[5]);
 	else
-		obj->eat_count = INT_MAX;
+		obj->eat_count = -1;
 	obj->philo_count = ft_atoi(argv[1]);
 	obj->time_to_die = ft_atoi(argv[2]);
 	obj->time_to_eat = ft_atoi(argv[3]);
 	obj->time_to_sleep = ft_atoi(argv[4]);
+	exit_cond(obj->time_to_die, obj->time_to_eat, obj->time_to_sleep, \
+	obj->philo_count);
 	obj->dead = 0;
 	pthread_mutex_init(&obj->print_mutex, NULL);
 	pthread_mutex_init(&obj->die, NULL);
